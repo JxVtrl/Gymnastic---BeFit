@@ -20,9 +20,18 @@ export const Header = () => {
     >
       <Text fontWeight="bold">ACADEMIA</Text>
       <Flex gap="10px">
-        <Link to="/">Home</Link>
-        <Link to="/about">Sobre nós</Link>
-        <Link to="/trainingDivision">Divisão de treinos</Link>
+        <Text  bgColor="transparent" p="5px">
+          <Link to="/">Home</Link>
+        </Text>
+        <Text bgColor="transparent" p="5px">
+          <Link to="/about">Sobre nós</Link>
+        </Text>
+        <Text  bgColor="transparent" p="5px">
+          <Link to="/trainingDivision">Divisão de treinos</Link>
+        </Text>
+        <Text bgColor="transparent" p="5px">
+          <Link to="/customTraining">Treino Personalizado</Link>
+        </Text>
       </Flex>
     </Flex>
   );

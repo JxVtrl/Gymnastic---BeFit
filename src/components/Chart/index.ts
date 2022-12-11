@@ -1,0 +1,1 @@
+export { Effectivity } from './Effectivity'

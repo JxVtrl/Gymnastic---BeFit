@@ -8,58 +8,81 @@ import {
   SliderThumb,
   SliderMark,
   Box,
+  UnorderedList,
+  ListItem,
 } from "@chakra-ui/react";
+import { CheckCircleIcon } from "@chakra-ui/icons";
+import { Effectivity } from "../Chart";
+import { WorkoutCollection } from "../WorkoutCollection";
 
 export const Training: React.FC = () => {
-
-    const possibleModerations = ['leve', 'moderado', 'intenso', 'muito intenso']
-
-    const [sliderValue, setSliderValue] = useState(0);
-
-    const labelStyles = {
-        mt: "2",
-        ml: "-2.5",
-        fontSize: "sm",
-    };
-
   return (
-    <Flex flexDir="column" p="20px" w="100%">
-      <Text fontSize='15px' fontWeight="400">Intensidade de treino</Text>
-      <Box w="100%" pt={6} pb={2}>
-        <Slider
-          w="200px"
-          aria-label="slider-ex-6"
-          colorScheme='teal'
-          min={0}
-          max={4}
-          onChange={(val) => setSliderValue(val)}
-        >
-          <SliderMark value={25} {...labelStyles}>
-            25%
-          </SliderMark>
-          <SliderMark value={50} {...labelStyles}>
-            50%
-          </SliderMark>
-          <SliderMark value={75} {...labelStyles}>
-            75%
-          </SliderMark>
-          <SliderMark
-            value={sliderValue}
-            textAlign="center"
-            bg="blue.500"
-            color="white"
-            mt="-10"
-            ml="-5"
-            w="10"
-          >
-            {sliderValue}
-          </SliderMark>
-          <SliderTrack>
-            <SliderFilledTrack />
-          </SliderTrack>
-          <SliderThumb />
-        </Slider>
-      </Box>
+    <Flex p="20px" w="100%" direction="column" align="center" flexShrink={0}>
+      <Text textAlign="center" fontSize="17px" fontWeight="700">
+        Perfil de treino
+      </Text>
+      <Flex maxW='500px' direction="column" gap="20px" w='100%' flexShrink={0}>
+        <Flex maxH='350px' justify='center' w='100%'>
+          <Effectivity />
+        </Flex>
+
+        <Flex direction="column" w="100%" flexShrink={0}>
+          <Text>Semana de treino de força</Text>
+          <Flex>
+            <UnorderedList
+              display="flex"
+              listStyleType="none"
+              p="0"
+              m="0"
+              justifyContent="space-around"
+              w="100%"
+            >
+              {["seg", "ter", "qua", "qui", "sex", "sab", "dom"].map((item) => (
+                <ListItem
+                  w="35px"
+                  display="flex"
+                  flexDir="column"
+                  alignItems="center"
+                >
+                  <CheckCircleIcon />
+                  {item}
+                </ListItem>
+              ))}
+            </UnorderedList>
+          </Flex>
+        </Flex>
+
+        <Flex direction="column" w="100%" flexShrink={0}>
+          <Text>Semana de treino de resistência</Text>
+          <Flex>
+            <UnorderedList
+              display="flex"
+              listStyleType="none"
+              p="0"
+              m="0"
+              justifyContent="space-around"
+              w="100%"
+            >
+              {["seg", "ter", "qua", "qui", "sex", "sab", "dom"].map((item) => (
+                <ListItem
+                  w="35px"
+                  display="flex"
+                  flexDir="column"
+                  alignItems="center"
+                >
+                  <CheckCircleIcon />
+                  {item}
+                </ListItem>
+              ))}
+            </UnorderedList>
+          </Flex>
+        </Flex>
+
+        <Flex w="100%" flexShrink={0} direction='column'>
+          <Text>Coleção de treinos</Text>
+          <WorkoutCollection />
+        </Flex>
+      </Flex>
     </Flex>
   );
 };
