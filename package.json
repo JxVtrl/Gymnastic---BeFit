@@ -13,6 +13,7 @@
     "@chakra-ui/react": "^2.4.3",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@types/react-gauge-chart": "^0.4.0",
     "bootstrap": "^5.2.3",
     "chart.js": "^4.0.1",
     "firebase": "^9.15.0",
@@ -22,6 +23,7 @@
     "react-bootstrap": "^2.7.0",
     "react-chartjs-2": "^5.0.1",
     "react-dom": "^18.2.0",
+    "react-gauge-chart": "^0.4.1",
     "react-router-dom": "^6.4.5",
     "swiper": "^8.4.5"
   },
