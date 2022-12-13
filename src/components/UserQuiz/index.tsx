@@ -174,7 +174,6 @@ export const UserQuiz: React.FC = () => {
         return !userAnswers.drinks;
       case 7:
         return !userAnswers.alergy;
-
       default:
         return false;
     }
@@ -182,7 +181,7 @@ export const UserQuiz: React.FC = () => {
   };
 
   return (
-    <Modal isOpen={newUserFlag} onClose={() => setNewUserFlag(false)}>
+    <Modal isOpen={false} onClose={() => setNewUserFlag(false)}>
       <ModalOverlay />
       <ModalContent mx="20px" placeSelf="center">
         <ModalHeader as={Flex} flexDir="column" gap="12px">

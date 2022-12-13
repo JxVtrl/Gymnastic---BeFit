@@ -60,8 +60,8 @@ export const Diet: React.FC = () => {
           color="#000"
           placeholder="Selecione seu objetivo!"
         >
-          <option value="emagrecer">Emagrecer</option>
-          <option value="resistencia">Resistência</option>
+          <option value="emagrecer"><Text>{imc >= 25 ? 'Emagrecer' : 'Engordar'}</Text></option>
+          <option value="resistencia"><Text>Resistência</Text></option>
           <option value="hipertrofia">Hipertrofia</option>
         </Select>
         {goal && (

@@ -9,11 +9,12 @@ export const Selects = ({ title, type, children, valueSelect }: any) => {
     <Flex gap="10px" flexDir="column">
       <Text>{title}</Text>
       <Select
+        defaultValue={'0'}
         value={valueSelect}
         variant="flushed"
         onChange={(e: any) => handleAnswer(e, type)}
       >
-        <option selected disabled>
+        <option value='0' selected disabled>
           Selecione
         </option>
         {children}
