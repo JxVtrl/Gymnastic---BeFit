@@ -24,6 +24,7 @@ import {
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 import { iUser, AuthError } from "src/interfaces";
+import { useApp } from "./AppContext";
 
 const AuthContext = createContext({});
 
@@ -33,6 +34,9 @@ export function AuthProvider({ children }: any) {
   const [userFound, setUserFound] = useState<iUser | null>(null);
 
   const [logError, setLogError] = useState<AuthError | undefined>(undefined);
+
+  const [newUserFlag, setNewUserFlag] = useState<boolean>(false);
+
 
   // Criando a referencia para as coleções do firestore
   const usersCollection = collection(db, "users");
@@ -70,6 +74,8 @@ export function AuthProvider({ children }: any) {
         await setDoc(doc(trainingCollection, uid), {
           training: [],
         });
+
+        setNewUserFlag(true);
 
         // Redirecionando para home
         redirect();
@@ -314,6 +320,7 @@ export function AuthProvider({ children }: any) {
     handleUpdateAvatar,
     photo,
     setPhoto,
+    newUserFlag,
     // getPhotoURL,
     usernameAvailable,
     findUser,

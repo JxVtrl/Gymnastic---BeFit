@@ -15,12 +15,14 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { QuestionIcon } from "@chakra-ui/icons";
+import QuizQuestions from '../../utils/quizJson.json'
 
 export const Diet: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [height, setHeight] = useState<number>(0);
-  const [weight, setWeight] = useState<number>(0);
+  const [imc, setImc] = useState<number>(0);
+  const [height, setHeight] = useState<string | number>("");
+  const [weight, setWeight] = useState<string | number>("");
   const [goal, setGoal] = useState<string>("");
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -31,8 +33,8 @@ export const Diet: React.FC = () => {
     alert("Em breve");
   };
 
-  const calculateImc = () => {
-    const imc = weight / (height * height);
+  const calculateImc = (height: number | string, weight: number | string) => {
+    const imc = Number(weight) / Math.pow(Number(height), 2);
     return imc.toFixed(2);
   };
 
@@ -81,21 +83,20 @@ export const Diet: React.FC = () => {
         {goal && height && weight && (
           <Flex flexDir="column" gap="5px" align="center" justify="center">
             <Text as="h1" fontWeight="400" m="15px auto">
-              Seu IMC é: {calculateImc()}
+              Seu IMC é: {calculateImc(height, weight)}
             </Text>
             <Text as="h1" fontWeight="400" m="15px auto">
               Seu objetivo é: {goal}
             </Text>
           </Flex>
         )}
-
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>IMC - O que significa?</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <Text as='p'>
+              <Text as="p">
                 O IMC é um cálculo simples que permite avaliar se a pessoa está
                 dentro do peso que é considerado ideal para a sua altura. Também
                 conhecido como Índice de Massa Corporal, o IMC é uma fórmula
@@ -122,7 +123,7 @@ export const Diet: React.FC = () => {
         <Button
           w="50px"
           position="absolute"
-          bottom="100px"
+          bottom="15%"
           right="10px"
           colorScheme="blue"
           variant="outline"

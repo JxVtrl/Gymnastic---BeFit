@@ -1,0 +1,38 @@
+{
+    "questions": [
+      {
+        "number": 1,
+        "question": "Qual sua altura ?"
+      },
+      {
+        "number": 2,
+        "question": "Qual seu peso ?"
+      },
+      {
+        "number": 3,
+        "question": "Malha há quanto tempo ?"
+      },
+      {
+        "number": 4,
+        "question": "Qual seu biotipo ?"
+      },
+      {
+        "number": 5,
+        "question": "Faz aeróbico ?",
+        "question2": "Há quanto tempo ?",
+        "question3": "Como você se classificaria ? Ex.[Iniciante, Moderado, Experiente]"
+      },
+      {
+        "number": 6,
+        "question": "Fuma ?"
+      },
+      {
+        "number": 7,
+        "question": "Bebe ?"
+      },
+      {
+        "number": 8,
+        "question": "Tem alergia à algum remédio ou suplemento ?"
+      }
+    ]
+    }

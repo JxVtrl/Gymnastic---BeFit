@@ -6,9 +6,11 @@ export const Summary = () => {
   const { name }: any = useApp();
 
   return (
-    <Flex w="100%" h="100%" bgColor="#000">
+    <Flex p="20px" w="100%" h="100%" bgColor="#000">
       <Text as="h1" color="#fff">
-        Olá nome que virá do useApp rs!
+        Olá! Somos a academia Gymnastic e estamos aqui para te mostrar que
+        conquistar aquele corpo que você quer pode ser mais fácil do que vocẽ
+        imagina!
       </Text>
     </Flex>
   );
