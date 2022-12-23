@@ -9,8 +9,8 @@ export const Navigation = (): any => {
     <Flex h="100vh" w="100%">
       <Swiper
         slidesPerView={1}
-        onSlideChange={() => console.log("slide change")}
-        onSwiper={(swiper) => console.log(swiper)}
+        // onSlideChange={() => console.log("slide change")}
+        // onSwiper={(swiper) => console.log(swiper)}
         defaultValue={3}
         loop={true}
       >

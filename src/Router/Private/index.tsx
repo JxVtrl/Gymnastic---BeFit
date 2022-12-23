@@ -6,9 +6,9 @@ import { iPrivate } from "../../interfaces";
 export const PrivateRoute: FC<any> = ({ children }) => {
   const { user }: any = useAuth();
 
-  // if (!user?.uid) {
-  //   return <Navigate to={"/login"} replace />;
-  // }
+  if (!user?.uid) {
+    return <Navigate to={"/login"} replace />;
+  }
 
   return children;
 };

@@ -15,7 +15,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { QuestionIcon } from "@chakra-ui/icons";
-import QuizQuestions from '../../utils/quizJson.json'
+import QuizQuestions from "../../utils/quizJson.json";
 
 export const Diet: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -60,8 +60,10 @@ export const Diet: React.FC = () => {
           color="#000"
           placeholder="Selecione seu objetivo!"
         >
-          <option value="emagrecer"><Text>{imc >= 25 ? 'Emagrecer' : 'Engordar'}</Text></option>
-          <option value="resistencia"><Text>Resistência</Text></option>
+          <option value="emagrecer">
+            {imc >= 25 ? "Emagrecer" : "Engordar"}
+          </option>
+          <option value="resistencia">Resistência</option>
           <option value="hipertrofia">Hipertrofia</option>
         </Select>
         {goal && (

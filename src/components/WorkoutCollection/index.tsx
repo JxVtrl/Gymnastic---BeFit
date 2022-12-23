@@ -28,8 +28,8 @@ export const WorkoutCollection: React.FC = () => {
   return (
     <Swiper
       slidesPerView={1}
-      onSlideChange={() => console.log("slide change")}
-      onSwiper={(swiper) => console.log(swiper)}
+      // onSlideChange={() => console.log("slide change")}
+      // onSwiper={(swiper) => console.log(swiper)}
       defaultValue={3}
       loop={true}
       style={{ width: "100%", alignContent: "center" }}

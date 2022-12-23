@@ -22,9 +22,15 @@ export const UserQuiz: React.FC = () => {
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [quizIndex, setQuizIndex] = useState(0);
 
-  const { newUserFlag, setNewUserFlag, user }: any = useAuth();
+  const { newUserFlag, setNewUserFlag, user }: any =
+    useAuth();
 
-  const { userAnswers, handleAnswer }: any = useApp();
+  const {
+    userAnswers,
+    saveUserPersonalInfo,
+    userPersonalInfoModal,
+    setUserPersonalInfoModal,
+  }: any = useApp();
 
   const quizSteps = [
     {
@@ -153,9 +159,16 @@ export const UserQuiz: React.FC = () => {
   ];
 
   const handleClick = (active: boolean) => {
+    if (!active) {
+      return setQuizIndex(quizIndex - 1);
+    }
+
     if (active && quizIndex !== quizSteps.length) {
       setQuizIndex(quizIndex + 1);
-    } else setQuizIndex(quizIndex - 1);
+    } else if (active && quizIndex === quizSteps.length) {
+      saveUserPersonalInfo();
+      setNewUserFlag(false);
+    }
   };
 
   const checkButtonDisabled = (): boolean => {
@@ -181,7 +194,17 @@ export const UserQuiz: React.FC = () => {
   };
 
   return (
-    <Modal isOpen={false} onClose={() => setNewUserFlag(false)}>
+    <Modal
+      isOpen={userPersonalInfoModal}
+      onClose={() => setUserPersonalInfoModal(false)}
+      onOverlayClick={() => {
+        if (!newUserFlag) {
+          setUserPersonalInfoModal(false);
+        } else {
+          return;
+        }
+      }}
+    >
       <ModalOverlay />
       <ModalContent mx="20px" placeSelf="center">
         <ModalHeader as={Flex} flexDir="column" gap="12px">
@@ -209,7 +232,7 @@ export const UserQuiz: React.FC = () => {
           {quizIndex === 0 ? <></> : quizSteps[quizIndex - 1].content}
         </ModalBody>
         <ModalFooter>
-          {quizIndex !== 0 && (
+          {quizIndex !== 0 && quizIndex !== quizSteps.length && (
             <Button
               colorScheme="blue"
               mr={3}
@@ -224,7 +247,7 @@ export const UserQuiz: React.FC = () => {
             mr={3}
             onClick={() => handleClick(true)}
           >
-            {quizIndex == quizSteps.length - 1 ? <>Salvar</> : <>Próximo</>}
+            {quizIndex == quizSteps.length ? <>Salvar</> : <>Próximo</>}
           </Button>
         </ModalFooter>
       </ModalContent>

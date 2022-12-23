@@ -7,4 +7,4 @@ export interface iUserQuiz {
   smoke: number | string | undefined;
   drinks: number | string | undefined;
   alergy: number | string | undefined;
-}
+};

@@ -37,12 +37,13 @@ export const Training: React.FC = () => {
               justifyContent="space-around"
               w="100%"
             >
-              {["seg", "ter", "qua", "qui", "sex", "sab", "dom"].map((item) => (
+              {["seg", "ter", "qua", "qui", "sex", "sab", "dom"].map((item, index) => (
                 <ListItem
                   w="35px"
                   display="flex"
                   flexDir="column"
                   alignItems="center"
+                  key={index}
                 >
                   <CheckCircleIcon />
                   {item}
@@ -63,12 +64,13 @@ export const Training: React.FC = () => {
               justifyContent="space-around"
               w="100%"
             >
-              {["seg", "ter", "qua", "qui", "sex", "sab", "dom"].map((item) => (
+              {["seg", "ter", "qua", "qui", "sex", "sab", "dom"].map((item, index) => (
                 <ListItem
                   w="35px"
                   display="flex"
                   flexDir="column"
                   alignItems="center"
+                  key={index}
                 >
                   <CheckCircleIcon />
                   {item}

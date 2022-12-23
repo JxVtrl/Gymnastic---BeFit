@@ -24,7 +24,6 @@ import {
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 import { iUser, AuthError } from "src/interfaces";
-import { useApp } from "./AppContext";
 
 const AuthContext = createContext({});
 
@@ -33,10 +32,10 @@ export function AuthProvider({ children }: any) {
   const [photo, setPhoto] = useState<any>();
   const [userFound, setUserFound] = useState<iUser | null>(null);
 
+
+
   const [logError, setLogError] = useState<AuthError | undefined>(undefined);
-
   const [newUserFlag, setNewUserFlag] = useState<boolean>(false);
-
 
   // Criando a referencia para as coleções do firestore
   const usersCollection = collection(db, "users");
@@ -45,7 +44,6 @@ export function AuthProvider({ children }: any) {
 
   // Função para registrar um novo usuário
   const handleRegister = async (values: any, redirect: any) => {
-    setLogError(undefined);
     try {
       // Criando as credenciais do usuario com auth
       const userCredential = await createUserWithEmailAndPassword(
@@ -66,11 +64,12 @@ export function AuthProvider({ children }: any) {
           photoURL: "",
         });
 
-        // Criando um documento especifico de chat p/ usuario criado
+        // Criando um documento especifico de dieta p/ usuario criado
         await setDoc(doc(dietCollection, uid), {
           diet: [],
         });
 
+        // Criando um documento especifico de treino p/ usuario criado
         await setDoc(doc(trainingCollection, uid), {
           training: [],
         });
@@ -87,7 +86,6 @@ export function AuthProvider({ children }: any) {
 
   // Função para fazer login
   const handleLogin = async (values: any, redirect: any) => {
-    setLogError(undefined);
     try {
       // fazendo login com as credenciais do usuario
       const userCredential = await signInWithEmailAndPassword(
@@ -96,10 +94,8 @@ export function AuthProvider({ children }: any) {
         values.password
       );
 
-      const uid = userCredential.user.uid;
-
       const querySnapshot = await getDocs(
-        query(usersCollection, where("uid", "==", uid))
+        query(usersCollection, where("uid", "==", userCredential.user.uid))
       );
 
       const data = querySnapshot.docs[0].data();
@@ -111,8 +107,6 @@ export function AuthProvider({ children }: any) {
         username: data.username,
         email: data.email,
       });
-
-      // getChats();
 
       redirect();
     } catch (error: any) {
@@ -139,25 +133,9 @@ export function AuthProvider({ children }: any) {
     }
   };
 
-  // Criando o Objeto de chat do usuário
-  const createChatObject = () => {};
 
-  // Pegando todos os chats do user logado
-  // const getChats = async () => {
-  //   if (user) {
-  //     // Criando referencia para o arquivo
-  //     const chatRef = doc(chatsCollection, user.uid);
-  //     await getDoc(chatRef)
-  //       .then((doc) => {
-  //         if (doc.exists()) {
-  //           const chat = doc.data().chats;
-  //           console.log(chat);
-  //           setChats(chat);
-  //         }
-  //       })
-  //       .catch((err) => console.log(err));
-  //   }
-  // };
+
+
 
   // Adicionando um novo chat para o usuário
   // const addChats = async (username: string) => {
@@ -326,9 +304,6 @@ export function AuthProvider({ children }: any) {
     findUser,
     userFound,
     setUserFound,
-    // chats,
-    // getChats,
-    // addChats,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
