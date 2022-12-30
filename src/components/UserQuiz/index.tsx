@@ -15,21 +15,19 @@ import {
 } from "@chakra-ui/react";
 import { useApp, useAuth } from "../../context";
 import { Imc } from "../../components/Chart/Imc";
-import { Selects } from "../Selects";
 import { Inputs } from "../Inputs";
 
 export const UserQuiz: React.FC = () => {
-  const [buttonDisabled, setButtonDisabled] = useState(false);
   const [quizIndex, setQuizIndex] = useState(0);
 
-  const { newUserFlag, setNewUserFlag, user }: any =
-    useAuth();
+  const { newUserFlag, setNewUserFlag, user }: any = useAuth();
 
   const {
     userAnswers,
     saveUserPersonalInfo,
     userPersonalInfoModal,
-    setUserPersonalInfoModal,
+    setPersonalInfoModal,
+    handleAnswer,
   }: any = useApp();
 
   const quizSteps = [
@@ -64,63 +62,77 @@ export const UserQuiz: React.FC = () => {
         "O tempo de academia é importante para calcularmos a intensidade e divisões dos treinos.",
 
       content: (
-        <Selects
-          title="Malha há quanto tempo?"
-          type="workoutTime"
-          valueSelect={userAnswers.workoutTime}
-        >
-          <option value="Menos de 1 mês">Menos de 1 mês</option>
-          <option value="Entre 1 - 6 meses">Entre 1 - 6 meses</option>
-          <option value="Entre 6 meses e 1 ano">Entre 6 meses e 1 ano</option>
-          <option value="Mais de 1 ano">Mais de 1 ano</option>
-        </Selects>
+        <>
+          <Text>Malha há quanto tempo?</Text>
+          <Select
+            onChange={(e: any) => handleAnswer(e, "workoutTime")}
+            value={userAnswers.workoutTime}
+            placeholder="Selecione"
+          >
+            <option value="Menos de 1 mês">Menos de 1 mês</option>
+            <option value="Entre 1 - 6 meses">Entre 1 - 6 meses</option>
+            <option value="Entre 6 meses e 1 ano">Entre 6 meses e 1 ano</option>
+            <option value="Mais de 1 ano">Mais de 1 ano</option>
+          </Select>
+        </>
       ),
     },
     {
       id: 3,
-      title: "Qual seu biotipo ?",
+      title: "Qual seu biotipo?",
       description:
         "O biotipo é importante para calcularmos as variações de treinos e dietas tendo em base a resposta que seu corpo dará.",
       content: (
-        <Selects
-          title="Qual seu biotipo ?"
-          type="biotype"
-          valueSelect={userAnswers.biotype}
-        >
-          <option value="Ectomorfo">Ectomorfo</option>
-          <option value="Endomorfo">Endomorfo</option>
-          <option value="Mesomorfo">Mesomorfo</option>
-        </Selects>
+        <>
+          <Text>Qual seu biotipo?</Text>
+          <Select
+            value={userAnswers.biotype}
+            variant="flushed"
+            onChange={(e: any) => handleAnswer(e, "biotype")}
+            placeholder="Selecione"
+          >
+            <option value="Ectomorfo">Ectomorfo</option>
+            <option value="Endomorfo">Endomorfo</option>
+            <option value="Mesomorfo">Mesomorfo</option>
+          </Select>
+        </>
       ),
     },
     {
       id: 4,
-      title: "Faz aeróbico ?",
+      title: "Faz aeróbico?",
       content: (
-        <Selects
-          valueSelect={userAnswers.makeAerobyc}
-          title="Você pratica atividades aeróbias ?"
-          type="makeAerobyc"
-        >
-          <option value="Sim">Sim</option>
-          <option value="Não">Não</option>
-        </Selects>
+        <>
+          <Text>Faz aeróbico?</Text>
+          <Select
+            value={userAnswers.makeAerobyc}
+            title="Você pratica atividades aeróbias?"
+            onChange={(e: any) => handleAnswer(e, "makeAerobyc")}
+            placeholder="Selecione"
+          >
+            <option value="Sim">Sim</option>
+            <option value="Não">Não</option>
+          </Select>
+        </>
       ),
       description:
         "Precisamos saber como você se considera em relação a academia. É necessário para darmos continuidade e passar seu treino da melhor maneira à você.",
     },
     {
       id: 5,
-      title: "Fuma ?",
+      title: "Fuma?",
       content: (
-        <Selects
-          title="Você fuma (Cannabis, Cigarro, Vape) ?"
-          type="smoke"
-          valueSelect={userAnswers.smoke}
-        >
-          <option value="Sim">Sim</option>
-          <option value="Não">Não</option>
-        </Selects>
+        <>
+          <Text>Você fuma (Cannabis, Cigarro, Vape)?</Text>
+          <Select
+            onChange={(e: any) => handleAnswer(e, "smoke")}
+            value={userAnswers.smoke}
+            placeholder="Selecione"
+          >
+            <option value="Sim">Sim</option>
+            <option value="Não">Não</option>
+          </Select>
+        </>
       ),
       description:
         "Precisamos saber você fuma, para prestarmos mais atenção aos exercícios passados, em relação aos de alta intensidade.",
@@ -129,15 +141,20 @@ export const UserQuiz: React.FC = () => {
       id: 6,
       title: "Bebe ?",
       content: (
-        <Selects
-          title="Você consome bebidas alcóolicas ?"
-          type="drinks"
-          valueSelect={userAnswers.drinks}
-        >
-          <option value="Sim">Sim, com frequencia</option>
-          <option value="Casualmente">Sim, casual</option>
-          <option value="Não">Entre 6 meses e 1 ano</option>
-        </Selects>
+        <>
+          <Text>
+            Você consome bebidas alcóolicas (Cerveja, Vinho, Vodka, etc...) ?
+          </Text>
+          <Select
+            onChange={(e: any) => handleAnswer(e, "drinks")}
+            value={userAnswers.drinks}
+            placeholder="Selecione"
+          >
+            <option value="Sim">Sim, com frequencia</option>
+            <option value="Casualmente">Sim, casual</option>
+            <option value="Não">Entre 6 meses e 1 ano</option>
+          </Select>
+        </>
       ),
       description:
         "O motivo desta pergunta é basicamente ter uma noção para saber se os resultados que vão ser passados ao usuário, será condizente com seus hábitos alimentares!",
@@ -190,16 +207,15 @@ export const UserQuiz: React.FC = () => {
       default:
         return false;
     }
-    return false;
   };
 
   return (
     <Modal
       isOpen={userPersonalInfoModal}
-      onClose={() => setUserPersonalInfoModal(false)}
+      onClose={() => setPersonalInfoModal(false)}
       onOverlayClick={() => {
         if (!newUserFlag) {
-          setUserPersonalInfoModal(false);
+          setPersonalInfoModal(false);
         } else {
           return;
         }
@@ -244,7 +260,6 @@ export const UserQuiz: React.FC = () => {
           <Button
             colorScheme="blue"
             isDisabled={checkButtonDisabled()}
-            mr={3}
             onClick={() => handleClick(true)}
           >
             {quizIndex == quizSteps.length ? <>Salvar</> : <>Próximo</>}

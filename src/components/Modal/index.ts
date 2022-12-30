@@ -1,0 +1,1 @@
+export { IMC as ModalIMC} from './IMC'

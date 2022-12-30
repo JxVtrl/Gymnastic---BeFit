@@ -13,15 +13,16 @@ import { useAuth } from "./AuthContext";
 const AppContext = createContext({});
 
 export function AppProvider({ children }: any) {
-  const [userPersonalInfoModal, setUserPersonalInfoModal] =
+  const [userPersonalInfoModal, setPersonalInfoModal] =
     useState<boolean>(false);
   const [diets, setDiets] = useState<any>([]);
   const [trainings, setTrainings] = useState<any>([]);
+  const [userGoal, setUserGoal] = useState<string>("");
 
   const { newUserFlag, setNewUserFlag, user }: any = useAuth();
 
   useEffect(() => {
-    if (newUserFlag) setUserPersonalInfoModal(true);
+    if (newUserFlag) setPersonalInfoModal(true);
   }, [newUserFlag]);
 
   const [userAnswers, setUserAnswers] = useState<iUserQuiz>({
@@ -62,14 +63,32 @@ export function AppProvider({ children }: any) {
         alergy: userDoc.alergy,
       });
     } else {
-      setUserPersonalInfoModal(true);
+      setPersonalInfoModal(true);
       setNewUserFlag(true);
     }
   };
 
+  const getUserGoals = async () => {
+    const userRef = doc(db, "users", user?.uid);
+
+    const userDoc = await getDoc(userRef).then((doc) => {
+      if (doc.exists()) {
+        return doc.data();
+      } else {
+        return null;
+      }
+    });
+
+    if (userDoc) {
+      setUserGoal(userDoc?.goal);
+    }
+  };
+
   useEffect(() => {
-    if(user?.uid)
+    if (user?.uid) {
       getUserAnswers();
+      getUserGoals();
+    }
   }, [user]);
 
   const handleAnswer = (e: any, inputType: string) => {
@@ -125,13 +144,33 @@ export function AppProvider({ children }: any) {
     }
   };
 
+  const handleProfileGoal = async (goal: string) => {
+    console.log(goal);
+    // Criando referencia para o arquivo
+    const userRef = doc(usersCollection, user?.uid);
+
+    // fazer update do documento do usuario
+    await setDoc(
+      userRef,
+      {
+        goal,
+      },
+      { merge: true }
+    );
+
+    // update do user no context
+    getUserGoals();
+  };
+
   const value = {
     userAnswers,
     setUserAnswers,
     handleAnswer,
     saveUserPersonalInfo,
     userPersonalInfoModal,
-    setUserPersonalInfoModal,
+    setPersonalInfoModal,
+    handleProfileGoal,
+    userGoal,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

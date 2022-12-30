@@ -1,48 +1,91 @@
 import React, { useState } from "react";
-import {
-  Flex,
-  Text,
-  Button,
-  Select,
-  Input,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Flex, Text, Button, Select, useDisclosure } from "@chakra-ui/react";
 import { QuestionIcon } from "@chakra-ui/icons";
 import QuizQuestions from "../../utils/quizJson.json";
+import { useApp, useAuth } from "../../context";
+import { IMC } from "../Modal/IMC";
+import { ModalIMC } from "../Modal";
 
 export const Diet: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { handleProfileGoal, userGoal }: any = useApp();
+  const { user }: any = useAuth();
 
   const [imc, setImc] = useState<number>(0);
   const [height, setHeight] = useState<string | number>("");
   const [weight, setWeight] = useState<string | number>("");
-  const [goal, setGoal] = useState<string>("");
-
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setGoal(e.target.value);
-  };
-
-  const openModal = () => {
-    alert("Em breve");
-  };
 
   const calculateImc = (height: number | string, weight: number | string) => {
     const imc = Number(weight) / Math.pow(Number(height), 2);
     return imc.toFixed(2);
   };
 
+  const options = [
+    {
+      id: 0,
+      title: "Meu IMC",
+      onClick: () => null,
+      img: "https://images.unsplash.com/photo-1543286386-2e659306cd6c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+    },
+    {
+      id: 1,
+      title: "Minha dieta",
+      img: "https://images.unsplash.com/photo-1561043433-aaf687c4cf04?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+    },
+    {
+      id: 2,
+      title: "Meu treino",
+      img: "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+    },
+  ];
+
   return (
-    <Flex flexDir="column" w="100%">
+    <Flex flexDir="column" w="100%" align="center" maxW="310px" margin="0 auto">
       <Text as="h1" fontWeight="400" m="15px auto">
-        Qual o seu objetivo?
+        Perfil do usuário
       </Text>
+
+      <Select
+        value={userGoal}
+        onChange={(e) => handleProfileGoal(e.target.value)}
+        borderColor="#000"
+        w="250px"
+        variant="flushed"
+        color="#000"
+        m="20px"
+        placeholder="Selecione seu objetivo!"
+      >
+        
+        <option value="emagrecer">
+          {imc >= 25 ? "Emagrecer" : "Engordar"}
+        </option>
+        <option value="resistencia">Resistência</option>
+        <option value="hipertrofia">Hipertrofia</option>
+      </Select>
+
+      {options.map((option) => (
+        <Button
+          key={option.id}
+          onClick={option.onClick}
+          w="100%"
+          h="110px"
+          m="10px auto"
+          bgImg={`linear-gradient(180deg, rgba(9,9,121,0) 68%, rgba(0,0,0,1) 100%), url(${option.img})`}
+          bgSize="cover"
+          bgPosition="center"
+          justifyContent="flex-start"
+          alignItems="flex-end"
+          p="12px"
+          color="#fff"
+          _hover={{ transform: "scale(1.05)" }}
+        >
+          <Flex>
+            {option.title}
+            {option.id === 0 && <></>}
+          </Flex>
+        </Button>
+      ))}
+
       <Flex
         flexDir="column"
         gap="20px"
@@ -51,77 +94,19 @@ export const Diet: React.FC = () => {
         justify="center"
         m="10px auto"
       >
-        <Select
-          value={goal}
-          onChange={handleChange}
-          borderColor="#000"
-          w="250px"
-          variant="flushed"
-          color="#000"
-          placeholder="Selecione seu objetivo!"
-        >
-          <option value="emagrecer">
-            {imc >= 25 ? "Emagrecer" : "Engordar"}
-          </option>
-          <option value="resistencia">Resistência</option>
-          <option value="hipertrofia">Hipertrofia</option>
-        </Select>
-        {goal && (
-          <Flex gap="5px">
-            <Input
-              w="250px"
-              onChange={(e) => setHeight(e.target.value)}
-              value={height}
-              placeholder="Altura. Ex. (1.71)"
-            />
-            <Input
-              w="250px"
-              onChange={(e) => setWeight(e.target.value)}
-              value={weight}
-              placeholder="Peso atual. Ex. (75.6)"
-            />
-          </Flex>
-        )}
-        {goal && height && weight && (
+        {userGoal && user?.height && user?.weight && (
           <Flex flexDir="column" gap="5px" align="center" justify="center">
             <Text as="h1" fontWeight="400" m="15px auto">
-              Seu IMC é: {calculateImc(height, weight)}
+              Seu IMC é: {calculateImc(user.height, user.weight)}
             </Text>
             <Text as="h1" fontWeight="400" m="15px auto">
-              Seu objetivo é: {goal}
+              Seu objetivo é: {userGoal}
             </Text>
           </Flex>
         )}
-        <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>IMC - O que significa?</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <Text as="p">
-                O IMC é um cálculo simples que permite avaliar se a pessoa está
-                dentro do peso que é considerado ideal para a sua altura. Também
-                conhecido como Índice de Massa Corporal, o IMC é uma fórmula
-                utilizada por vários profissionais de saúde, incluindo médicos,
-                enfermeiros e nutricionistas, para saber, de uma forma rápida,
-                se a pessoa precisa ganhar ou perder peso. Embora seja uma
-                ferramenta muito comum, o IMC não é considerado a forma mais
-                exata de avaliar o peso, já que não leva em consideração a
-                composição corporal. Por isso, é comum que no caso de atletas
-                (que possuem uma maior quantidade de massa muscular) seja
-                aconselhado o uso de outras técnicas, como a bioimpedância, para
-                uma avaliação mais detalhada do peso
-              </Text>
-            </ModalBody>
 
-            <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={onClose}>
-                Close
-              </Button>
-              <Button variant="ghost">Secondary Action</Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+        <ModalIMC isOpen={isOpen} onClose={onClose} />
+
         <Button
           w="50px"
           position="absolute"

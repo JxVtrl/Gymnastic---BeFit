@@ -135,8 +135,6 @@ export function AuthProvider({ children }: any) {
 
 
 
-
-
   // Adicionando um novo chat para o usuário
   // const addChats = async (username: string) => {
   //   let chats = [] as any;
@@ -309,6 +307,7 @@ export function AuthProvider({ children }: any) {
     // getPhotoURL,
     emailAvailable,
     usernameAvailable,
+    setNewUserFlag,
     findUser,
     userFound,
     setUserFound,
