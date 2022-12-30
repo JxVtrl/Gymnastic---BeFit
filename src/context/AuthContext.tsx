@@ -243,6 +243,13 @@ export function AuthProvider({ children }: any) {
     return querySnapshot.empty;
   };
 
+  const emailAvailable = async (email: string) => {
+    const querySnapshot = await getDocs(
+      query(usersCollection, where("email", "==", email))
+    );
+    return querySnapshot.empty;
+  };
+
   // Atualizando a foto do usuario
   const handleUpdateAvatar = async (photoURL: string) => {
     if (user) {
@@ -300,6 +307,7 @@ export function AuthProvider({ children }: any) {
     setPhoto,
     newUserFlag,
     // getPhotoURL,
+    emailAvailable,
     usernameAvailable,
     findUser,
     userFound,

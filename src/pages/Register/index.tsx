@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
   Button,
   Text,
   Flex,
@@ -19,21 +12,20 @@ import {
   AlertTitle,
   AlertDescription,
   AlertIcon,
-  FormHelperText,
 } from "@chakra-ui/react";
 import { Field, Form, Formik } from "formik";
 import { useAuth } from "../../context";
 import {
   validateName,
   validateConfirm,
-  validateEmail,
   validatePassword,
 } from "../../helpers";
 import errorCodes from "../../utils/firebase-error-codes.json";
 
 export function Register() {
-  const { handleRegister, LogError, usernameAvailable }: any = useAuth();
-
+  const { handleRegister, LogError, usernameAvailable, emailAvailable }: any =
+    useAuth();
+  const [step, setStep] = useState(0);
   const navigate = useNavigate();
 
   const findErrorIndex = (item: any) => {
@@ -47,64 +39,103 @@ export function Register() {
     return null;
   };
 
-  async function validateUsername(value: string) {
-    let error = "";
+  async function validateEmail(value: string) {
     if (!value) {
-      error = "Nome de usuário é obrigatório";
+      return "E-mail é obrigatório";
+    } else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value)) {
+      return "E-mail inválido";
+    }
+
+    const result = await emailAvailable(value);
+    if (!result) return "E-mail já existe";
+    return null;
+  }
+
+  async function validateUsername(value: string) {
+    if (!value) {
+      return "Nome de usuário é obrigatório";
     } else if (value.length < 3) {
-      error = "Nome de usuário deve ter no mínimo 3 caracteres";
+      return "Nome de usuário deve ter no mínimo 3 caracteres";
     } else if (value.length > 20) {
-      error = "Nome de usuário deve ter no máximo 20 caracteres";
+      return "Nome de usuário deve ter no máximo 20 caracteres";
     } else if (!/^[a-zA-Z0-9]+$/.test(value)) {
-      error = "Nome de usuário deve conter apenas letras e números";
+      return "Nome de usuário deve conter apenas letras e números";
     }
 
     const result = await usernameAvailable(value);
-
-    if (!result) error = "Nome de usuário já existe";
-
-    return error;
+    if (!result) return "Nome de usuário já existe";
+    return null;
   }
 
   return (
-    <Flex h="100vh" w="100vw" overflow="hidden" justify="center" align="center">
-      <Modal isOpen={true} onClose={() => null}>
-        <ModalOverlay />
-        <ModalContent placeSelf="center">
-          <ModalHeader textAlign="center">
-            <Text fontSize="2xl" fontWeight="bold">
-              Jx's Chat
-            </Text>
-            <Text fontSize="sm" fontWeight="medium">
-              Register
-            </Text>
-          </ModalHeader>
-          <ModalBody>
-            {LogError && (
-              <Alert status="error" my="10px">
-                <AlertIcon />
-                <AlertTitle>Erro!</AlertTitle>
-                <AlertDescription>{findErrorIndex(LogError)}</AlertDescription>
-              </Alert>
-            )}
-            <Formik
-              initialValues={{
-                name: "",
-                email: "",
-                password: "",
-                confirm: "",
-                username: "",
-              }}
-              onSubmit={(values, actions) => {
-                setTimeout(() => {
-                  handleRegister(values, () => navigate("/"));
-                  actions.setSubmitting(false);
-                }, 1000);
-              }}
-            >
-              {(props) => (
-                <Form>
-                  <Flex direction="column" gap="20px">
+    <Flex
+      h="100vh"
+      w="100vw"
+      overflow="hidden"
+      bgColor="#0d1117"
+      color="#c9d1d9"
+    >
+      <Flex
+        justify="center"
+        flexDir="column"
+        maxW="310px"
+        margin="0 auto"
+        gap="20px"
+        w="100%"
+        overflow="hidden"
+      >
+        <Flex
+          justify="center"
+          align="center"
+          flexDir="column"
+          gap="35px"
+          w="100%"
+        >
+          <i className="fa-solid fa-dumbbell fa-2xl" />
+          <Text fontSize="2xl" fontWeight="light">
+            Faça registro no Trainee App
+          </Text>
+        </Flex>
+
+        {LogError && (
+          <Alert status="error" my="10px">
+            <AlertIcon />
+            <AlertTitle>Erro!</AlertTitle>
+            <AlertDescription>{findErrorIndex(LogError)}</AlertDescription>
+          </Alert>
+        )}
+        <Formik
+          initialValues={{
+            name: "",
+            email: "",
+            password: "",
+            confirm: "",
+            username: "",
+          }}
+          onSubmit={(values, actions) => {
+            if (step === 0) {
+              setStep(1);
+              actions.setSubmitting(false);
+            } else {
+              setTimeout(() => {
+                handleRegister(values, () => navigate("/"));
+                actions.setSubmitting(false);
+              }, 1000);
+            }
+          }}
+        >
+          {(props) => (
+            <Form>
+              <Flex
+                direction="column"
+                gap="20px"
+                border="1px solid #21262d"
+                p="16px"
+                borderRadius="6px"
+                w="100%"
+              >
+                {step === 0 ? (
+                  <>
                     <Field name="name" validate={validateName}>
                       {({ field, form }: any) => (
                         <FormControl
@@ -142,7 +173,9 @@ export function Register() {
                         </FormControl>
                       )}
                     </Field>
-
+                  </>
+                ) : step === 1 ? (
+                  <>
                     <Field name="email" validate={validateEmail}>
                       {({ field, form }: any) => (
                         <FormControl
@@ -213,42 +246,81 @@ export function Register() {
                         </FormControl>
                       )}
                     </Field>
+                  </>
+                ) : (
+                  <></>
+                )}
 
+                <Flex justify="center" align="center" gap="5px">
+                  {step === 1 && (
                     <Button
+                      w="100%"
                       mt={4}
                       colorScheme="teal"
-                      isLoading={props.isSubmitting}
-                      type="submit"
-                      disabled={
-                        props.values.email === "" ||
-                        props.values.password === "" ||
-                        props.values.name === "" ||
-                        props.values.username === ""
-                      }
+                      variant="outline"
+                      onClick={() => setStep(0)}
                     >
-                      Fazer Registro
+                      Voltar
                     </Button>
-                  </Flex>
-                </Form>
-              )}
-            </Formik>
-          </ModalBody>
+                  )}
 
-          <ModalFooter as={Flex} flexDirection="column" gap="15px">
-            <Flex direction="column" align="center" fontSize="14px">
-              <Text>Já tem uma conta?</Text>
-              <Link to="/login">
-                <Text
-                  transition="all 0.2s ease-in-out"
-                  _hover={{ color: "#8790aadd" }}
-                >
-                  Logue-se aqui
-                </Text>
-              </Link>
-            </Flex>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+                  <Button
+                    mt={4}
+                    colorScheme="teal"
+                    isLoading={props.isSubmitting}
+                    type="submit"
+                    w="100%"
+                    disabled={
+                      step === 0
+                        ? props.values.name === "" ||
+                          props.values.username === "" ||
+                          props.values.username.length < 3 ||
+                          props.errors.username !== undefined ||
+                          props.errors.name !== undefined
+                        : step === 1
+                        ? props.values.email === "" ||
+                          props.values.password === "" ||
+                          props.values.confirm === "" ||
+                          props.values.password.length < 6 ||
+                          props.values.confirm.length < 6 ||
+                          props.values.password !== props.values.confirm ||
+                          props.errors.password !== undefined ||
+                          props.errors.confirm !== undefined ||
+                          props.errors.email !== undefined
+                        : false
+                    }
+                  >
+                    {step === 0 ? "Próximo" : "Registrar"}
+                  </Button>
+                </Flex>
+              </Flex>
+            </Form>
+          )}
+        </Formik>
+
+        <Flex
+          direction="column"
+          align="center"
+          fontSize="14px"
+          border="1px solid #21262d"
+          p="16px"
+          borderRadius="6px"
+          w="100%"
+        >
+          <Text>
+            Já tem conta?{" "}
+            <Link
+              to="/login"
+              style={{
+                color: "#58a6ff",
+              }}
+            >
+              Logue-se aqui
+            </Link>
+            .
+          </Text>
+        </Flex>
+      </Flex>
     </Flex>
   );
 }
