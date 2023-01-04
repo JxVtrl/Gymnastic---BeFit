@@ -13,12 +13,13 @@ import {
   Input,
   Select,
 } from "@chakra-ui/react";
-import { useApp, useAuth } from "../../context";
-import { Imc } from "../../components/Chart/Imc";
-import { Inputs } from "../Inputs";
+import { useApp, useAuth } from "../../../context";
+import { Imc } from "../../Chart/Imc";
+import { Inputs } from "../../Inputs";
 
-export const UserQuiz: React.FC = () => {
+export const Quiz: React.FC = () => {
   const [quizIndex, setQuizIndex] = useState(0);
+  const [showBiotypeDetails, setShowBiotypeDetails] = useState(false);
 
   const { newUserFlag, setNewUserFlag, user }: any = useAuth();
 
@@ -95,6 +96,15 @@ export const UserQuiz: React.FC = () => {
             <option value="Endomorfo">Endomorfo</option>
             <option value="Mesomorfo">Mesomorfo</option>
           </Select>
+          <Button
+            onClick={() => {
+              setShowBiotypeDetails(true);
+            }}
+          >
+            sobre biotipo
+          </Button>
+          {showBiotypeDetails && <Flex bgColor="#ccc" borderRadius="20px" top="0" color="#fff" bottom="0" position="absolute" w="400px" h="500px">
+            </Flex>}
         </>
       ),
     },

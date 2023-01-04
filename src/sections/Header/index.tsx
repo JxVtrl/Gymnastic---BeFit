@@ -18,7 +18,7 @@ export const Header = () => {
       h="15vh"
       w="100%"
     >
-      <Text fontWeight="bold">ACADEMIA</Text>
+      <Link to="/"><Text fontWeight="bold">ACADEMIA</Text></Link>
       <Flex gap="10px">
         <Text  bgColor="transparent" p="5px">
           <Link to="/">Home</Link>

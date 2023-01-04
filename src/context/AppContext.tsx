@@ -6,7 +6,7 @@ import React, {
   useState,
   useRef,
 } from "react";
-import { iUserQuiz } from "../interfaces/userQuiz.interface";
+import { iUserInfo } from "../interfaces/User.interface";
 import { db } from "../services";
 import { useAuth } from "./AuthContext";
 
@@ -18,65 +18,60 @@ export function AppProvider({ children }: any) {
   const [diets, setDiets] = useState<any>([]);
   const [trainings, setTrainings] = useState<any>([]);
   const [userGoal, setUserGoal] = useState<string>("");
+  const [userAnswers, setUserAnswers] = useState<iUserInfo | object>({});
 
   const { newUserFlag, setNewUserFlag, user }: any = useAuth();
-
-  useEffect(() => {
-    if (newUserFlag) setPersonalInfoModal(true);
-  }, [newUserFlag]);
-
-  const [userAnswers, setUserAnswers] = useState<iUserQuiz>({
-    height: undefined,
-    weight: undefined,
-    workoutTime: undefined,
-    biotype: undefined,
-    makeAerobyc: undefined,
-    smoke: undefined,
-    drinks: undefined,
-    alergy: undefined,
-  });
 
   const usersCollection = collection(db, "users");
   const dietCollection = collection(db, "diet");
   const trainingCollection = collection(db, "training");
 
+  useEffect(() => {
+    if (newUserFlag) {
+      setPersonalInfoModal(true);
+      console.log("new user");
+    }
+  }, [newUserFlag]);
+
   const getUserAnswers = async () => {
     const userRef = doc(db, "users", user?.uid);
 
     const userDoc = await getDoc(userRef).then((doc) => {
-      if (doc.exists()) {
-        return doc.data();
-      } else {
-        return null;
-      }
+      if (doc.exists()) return doc.data();
+      else return null;
     });
 
     if (userDoc) {
+      const {
+        height,
+        weight,
+        workoutTime,
+        biotype,
+        makeAerobyc,
+        smoke,
+        drinks,
+        alergy,
+      } = userDoc;
+
       setUserAnswers({
-        height: userDoc.height,
-        weight: userDoc.weight,
-        workoutTime: userDoc.workoutTime,
-        biotype: userDoc.biotype,
-        makeAerobyc: userDoc.makeAerobyc,
-        smoke: userDoc.smoke,
-        drinks: userDoc.drinks,
-        alergy: userDoc.alergy,
+        height,
+        weight,
+        workoutTime,
+        biotype,
+        makeAerobyc,
+        smoke,
+        drinks,
+        alergy,
       });
-    } else {
-      setPersonalInfoModal(true);
-      setNewUserFlag(true);
-    }
+    } else setPersonalInfoModal(true);
   };
 
   const getUserGoals = async () => {
     const userRef = doc(db, "users", user?.uid);
 
     const userDoc = await getDoc(userRef).then((doc) => {
-      if (doc.exists()) {
-        return doc.data();
-      } else {
-        return null;
-      }
+      if (doc.exists()) return doc.data();
+      else return null;
     });
 
     if (userDoc) {
@@ -104,7 +99,7 @@ export function AppProvider({ children }: any) {
     await setDoc(
       userRef,
       {
-        ...userAnswers,
+        infos: { ...userAnswers },
       },
       { merge: true }
     );
@@ -119,7 +114,6 @@ export function AppProvider({ children }: any) {
         .then((doc) => {
           if (doc.exists()) {
             const diets = doc.data().chats;
-            console.log(diets);
             setDiets(diets);
           }
         })
@@ -136,7 +130,6 @@ export function AppProvider({ children }: any) {
         .then((doc) => {
           if (doc.exists()) {
             const trainees = doc.data().chats;
-            console.log(trainees);
             setTrainings(trainees);
           }
         })
@@ -145,7 +138,6 @@ export function AppProvider({ children }: any) {
   };
 
   const handleProfileGoal = async (goal: string) => {
-    console.log(goal);
     // Criando referencia para o arquivo
     const userRef = doc(usersCollection, user?.uid);
 

@@ -32,8 +32,6 @@ export function AuthProvider({ children }: any) {
   const [photo, setPhoto] = useState<any>();
   const [userFound, setUserFound] = useState<iUser | null>(null);
 
-
-
   const [logError, setLogError] = useState<AuthError | undefined>(undefined);
   const [newUserFlag, setNewUserFlag] = useState<boolean>(false);
 
@@ -41,6 +39,25 @@ export function AuthProvider({ children }: any) {
   const usersCollection = collection(db, "users");
   const dietCollection = collection(db, "diet");
   const trainingCollection = collection(db, "training");
+
+  //  Função para atualizar o estado do usuário
+  const updateUser = ({
+    uid,
+    email,
+    name,
+    photoURL,
+    infos = undefined,
+    username,
+  }: iUser) => {
+    setUser({
+      uid,
+      name,
+      username,
+      email,
+      photoURL,
+      infos,
+    });
+  };
 
   // Função para registrar um novo usuário
   const handleRegister = async (values: any, redirect: any) => {
@@ -87,11 +104,12 @@ export function AuthProvider({ children }: any) {
   // Função para fazer login
   const handleLogin = async (values: any, redirect: any) => {
     try {
+      const { email, password } = values;
       // fazendo login com as credenciais do usuario
       const userCredential = await signInWithEmailAndPassword(
         auth,
-        values.email,
-        values.password
+        email,
+        password
       );
 
       const querySnapshot = await getDocs(
@@ -100,12 +118,20 @@ export function AuthProvider({ children }: any) {
 
       const data = querySnapshot.docs[0].data();
 
+      console.log(data);
+
+      const { uid, name, username, photoURL } = data;
+
+      updateUser({
+        ...data,
+      });
+
       setUser({
-        uid: data.uid,
-        name: data.name,
-        photoURL: data.photoURL,
-        username: data.username,
-        email: data.email,
+        uid,
+        name,
+        photoURL,
+        username,
+        email,
       });
 
       redirect();
@@ -121,76 +147,11 @@ export function AuthProvider({ children }: any) {
       getDoc(userRef).then((doc) => {
         if (doc.exists()) {
           const userData = doc.data();
-          setUser({
-            uid: user.uid,
-            name: userData.name,
-            username: userData.username,
-            email: userData.email,
-            photoURL: userData.photoURL,
-          });
+          updateUser(userData);
         }
       });
     }
   };
-
-
-
-  // Adicionando um novo chat para o usuário
-  // const addChats = async (username: string) => {
-  //   let chats = [] as any;
-
-  //   // get chats from user
-  //   await getDoc(doc(chatsCollection, user?.uid))
-  //     .then((doc) => {
-  //       if (doc.exists()) chats = doc.data().chats;
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-
-  //   // Se não exister nenhum chat com este uid registrado
-  //   console.log(chats);
-
-  //   // Verificar se já existe chat com o usuario pesquisado
-  //   for (let i = 0; i < chats.length; i++) {
-  //     if (chats[i].uid == userFound?.uid) {
-  //       return;
-  //     }
-  //   }
-
-  //   if (chats.length > 0) {
-  //     await setDoc(doc(chatsCollection, user?.uid), {
-  //       chats: [
-  //         ...chats,
-  //         {
-  //           id: chats.length,
-  //           uid: userFound?.uid,
-  //           name: userFound?.name,
-  //           username: userFound?.username,
-  //           photoURL: userFound?.photoURL,
-  //           chat: [],
-  //         },
-  //       ],
-  //     });
-  //   } else {
-  //     await setDoc(doc(chatsCollection, user?.uid), {
-  //       chats: [
-  //         {
-  //           id: chats.length,
-  //           uid: userFound?.uid,
-  //           name: userFound?.name,
-  //           username: userFound?.username,
-  //           photoURL: userFound?.photoURL,
-  //           chat: [],
-  //         },
-  //       ],
-  //     });
-  //   }
-
-  //   // getChats();
-
-  //   // add doc to chats colletion in user.uid document
-  // };
 
   // Alterar o nome do usuario
   const handleUsername = async (username: string) => {
@@ -223,12 +184,13 @@ export function AuthProvider({ children }: any) {
     if (querySnapshot?.docs[0]?.exists()) {
       const data = querySnapshot.docs[0].data();
 
+      const { uid, name, username, photoURL, email } = data;
       setUserFound({
-        uid: data.uid,
-        email: data.email,
-        name: data.name,
-        username: data.username,
-        photoURL: data.photoURL,
+        uid,
+        email,
+        name,
+        username,
+        photoURL,
       });
     }
   };
@@ -241,6 +203,7 @@ export function AuthProvider({ children }: any) {
     return querySnapshot.empty;
   };
 
+  // Verificar se há disponibilidade de um email
   const emailAvailable = async (email: string) => {
     const querySnapshot = await getDocs(
       query(usersCollection, where("email", "==", email))
@@ -284,8 +247,9 @@ export function AuthProvider({ children }: any) {
   // Verificando o estado do usuario
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
-      if (user?.uid) createUserObject(user);
-      else setUser(null);
+      if (user?.uid) {
+        createUserObject(user);
+      } else setUser(null);
     });
 
     return () => {
